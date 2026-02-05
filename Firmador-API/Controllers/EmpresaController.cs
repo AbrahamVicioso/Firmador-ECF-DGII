@@ -19,7 +19,7 @@ namespace Firmador_API.Controllers
         [HttpPost("{empresa}/[action]")]
         [Consumes("application/xml")]
         [Produces("application/xml")]
-        public async Task<IActionResult> Encrypt(short empresa, [FromBody] XmlDocument document)
+        public async Task<IActionResult> Sign(short empresa, [FromBody] XmlDocument document)
         {
             var commnad = new EncryptXmlCommand()
             {
