@@ -5,15 +5,20 @@ using System.Xml;
 
 namespace Firmador_API.Services
 {
+    public class EncryptationBody {
+        public XmlDocument Document { get; set; }
+        public string CertificateName { get; set; }
+        public string CertificatePassword { get; set; }
+    }
     public class EncryptService
     {
-        public static XmlDocument EncryptXmlDocument(XmlDocument document)
+        public static XmlDocument EncryptXmlDocument(EncryptationBody body)
         {
             try
             {
-                string p12Path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "certificado.p12");
+                string p12Path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "certificados", $"{body.CertificateName}.p12");
 
-                var certificate = X509CertificateLoader.LoadPkcs12FromFile(p12Path,"123456789");
+                var certificate = X509CertificateLoader.LoadPkcs12FromFile(p12Path,$"{body.CertificatePassword}");
 
                 if (!certificate.HasPrivateKey)
                     throw new CryptographicException("El certificado no contiene una clave privada accesible.");
@@ -22,7 +27,7 @@ namespace Firmador_API.Services
                 if (privateKey == null)
                     throw new CryptographicException("No se pudo obtener la clave privada del certificado.");
 
-                var signedXml = new SignedXml(document)
+                var signedXml = new SignedXml(body.Document)
                 {
                     SigningKey = privateKey
                 };
@@ -39,9 +44,9 @@ namespace Firmador_API.Services
                 signedXml.ComputeSignature();
 
                 var xmlDigitalSignature = signedXml.GetXml();
-                document.DocumentElement?.AppendChild(document.ImportNode(xmlDigitalSignature, true));
+                body.Document.DocumentElement?.AppendChild(body.Document.ImportNode(xmlDigitalSignature, true));
 
-                return document;
+                return body.Document;
             }
             catch
             {
