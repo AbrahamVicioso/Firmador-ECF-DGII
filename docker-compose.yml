@@ -1,0 +1,15 @@
+services:
+  firmador-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: firmador-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:5299
+      ConnectionStrings__DefaultConnection: "${CONNECTION_STRING}"
+    ports:
+      - "5299:5299"
+    volumes:
+      - ./certificados:/app/certificados
+    restart: unless-stopped
