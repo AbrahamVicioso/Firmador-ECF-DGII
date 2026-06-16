@@ -12,4 +12,4 @@ services:
       - "5299:5299"
     volumes:
       - ./certificados:/app/certificados
-    restart: unless-stopped
+    restart: always
