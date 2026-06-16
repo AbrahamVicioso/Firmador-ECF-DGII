@@ -16,16 +16,16 @@ namespace Firmador_API.Controllers
             this._bus = bus;
         }
 
-        [HttpPost("{schema}/{empresa}/[action]")]
+        [HttpPost("{empresa}/[action]")]
         [Consumes("application/xml")]
         [Produces("application/xml")]
-        public async Task<IActionResult> Sign(short empresa, string schema, [FromBody] XmlDocument document)
+        public async Task<IActionResult> Sign(short empresa, [FromBody] XmlDocument document)
         {
             var commnad = new EncryptXmlCommand()
             {
                 empresa = empresa,
                 Document = document,
-                schema = schema
+                schema = "CEDESTECH"
             };
 
             var result = await _bus.InvokeAsync<XmlDocument>(commnad);
