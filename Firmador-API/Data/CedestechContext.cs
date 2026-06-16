@@ -19,9 +19,6 @@ public partial class CedestechContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        //modelBuilder
-        //    .HasDefaultSchema("ABRAHAM")
-        //    .UseCollation("USING_NLS_COMP");
 
         modelBuilder.ApplyConfiguration(new Configurations.EmpresaConfiguration());
         OnModelCreatingPartial(modelBuilder);

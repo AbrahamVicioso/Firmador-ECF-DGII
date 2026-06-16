@@ -8,7 +8,7 @@ namespace Firmador_API.UsesCases.EncryptXml
     {
         public static async Task<XmlDocument> Handle(EncryptXmlCommand command, IEmpresaRepository empresaRepository)
         {
-            var empresa = await empresaRepository.GetEmpresaByCodEmpresa(command.empresa);
+            var empresa = await empresaRepository.GetEmpresaAsync(command.schema,command.empresa);
 
             var result = Services.EncryptService.EncryptXmlDocument(new Services.EncryptationBody()
             {

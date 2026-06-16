@@ -1,12 +1,13 @@
 ﻿using Firmador_API.Exceptions;
 using Firmador_API.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Text.RegularExpressions;
 
 namespace Firmador_API.Repositories
 {
     public interface IEmpresaRepository
     {
-        Task<Empresa> GetEmpresaByCodEmpresa(short empresa);
+        Task<Empresa> GetEmpresaAsync(string schema, short empresa);
     }
 
     public class EmpresaRepository : IEmpresaRepository
@@ -18,19 +19,18 @@ namespace Firmador_API.Repositories
             this._context = context;
         }
 
-        public async Task<Empresa> GetEmpresaByCodEmpresa(short empresa)
+        public async Task<Empresa?> GetEmpresaAsync(string schema, short empresa)
         {
+            if (!Regex.IsMatch(schema, @"^[A-Z][A-Z0-9_]*$"))
+                throw new ArgumentException("Schema inválido");
 
-            var result = await _context.Empresas
-                .Where(t => t.CodEmpresa == empresa)
+            return await _context.Empresas
+                .FromSqlRaw($@"
+                    SELECT *
+                    FROM {schema}.COM_CAT_EMPRESAS
+                    WHERE COD_EMPRESA = {{0}}",
+                    empresa)
                 .FirstOrDefaultAsync();
-
-            if (result is null)
-            {
-                throw new NotFoundException();
-            }
-
-            return result;
         }
     }
 }
